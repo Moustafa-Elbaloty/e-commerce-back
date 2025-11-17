@@ -75,5 +75,41 @@ const loginUser = async (req, res) => {
       });
   }
 };
+// optinal //
+// Admin verifies vendor
+const verifyVendor = async (req, res) => {
+  try {
+    const { vendorId } = req.params;
+
+    // Only admin can verify vendors
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ success: false, message: "Only admin can verify vendors" });
+    }
+    const vendor = await vendorModel.findById(vendorId);
+
+    if (!vendor) {
+      return res.status(404).json({
+        success: false,
+        message: "Vendor not found"
+      });
+    }
+
+    vendor.verified = true;
+    await vendor.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Vendor verified successfully",
+      data: vendor
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error verifying vendor",
+      error: error.message
+    });
+  }
+};
 // نصدر عن نستخدمهم ف الراوت
-module.exports = { registerUser, loginUser };
+module.exports = { registerUser, loginUser,verifyVendor };
