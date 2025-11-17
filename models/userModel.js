@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
     password: { type: String, required: true, minlength: 6 },
-    role: { type: String, enum: ["user", "seller", "admin"], default: "user" },
+    role: { type: String, enum: ["user", "vender", "admin"], default: "user" },
     isBlocked: { type: Boolean, default: false },
   },
   { timestamps: true }
