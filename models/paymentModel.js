@@ -31,9 +31,6 @@ const paymentSchema = new mongoose.Schema(
     },
 
     // حالة الدفع
-    // pending = لسه مدفعش
-    // paid = تم الدفع
-    // failed = العملية فشلت
     status: {
       type: String,
       enum: ["pending", "paid", "failed"],
@@ -46,7 +43,11 @@ const paymentSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true } // بيضيف createdAt و updatedAt تلقائيًا
+  { timestamps: true }
 );
 
-module.exports = mongoose.model("Payment", paymentSchema);
+// ← الحل هنا
+module.exports =
+  mongoose.models.Payment || mongoose.model("Payment", paymentSchema);
+
+  
