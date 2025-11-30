@@ -1,35 +1,24 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/userModel");
 
-const protect = async (req, res, next) => {
-  let token;
-
-  // التحقق من وجود التوكن في الهيدر
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    try {
-      // استخراج التوكن من الهيدر
-      token = req.headers.authorization.split(" ")[1];
-
-      // فك التوكن
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      // نجيب المستخدم من قاعدة البيانات باستثناء الباسورد
-      req.user = await User.findById(decoded.id).select("-password");
-
-      // نكمل بعد ما نتحقق
-      next();
-    } catch (error) {
-      console.error(error);
-      res.status(401).json({ message: "❌ التوكن  منتهي الصلاحية" });
-    }
-  }
+module.exports = (req, res, next) => {
+  const token = req.header("Authorization")?.split(" ")[1];
 
   if (!token) {
-    res.status(401).json({ message: "🔒 غير مصرح لك بالدخول، مفيش توكن" });
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  // Check JWT_SECRET exists
+  if (!process.env.JWT_SECRET) {
+    return res.status(500).json({
+      message: "JWT_SECRET is not configured. Please check your .env file",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ message: "Invalid token" });
   }
 };
-
-module.exports = { protect };
