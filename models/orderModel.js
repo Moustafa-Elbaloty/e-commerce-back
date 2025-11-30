@@ -1,68 +1,53 @@
 const mongoose = require("mongoose");
 
-const orderItemSchema = new mongoose.Schema(
+// نموذج الدفع — يسجّل كل عملية دفع تمت لأي طلب
+const paymentSchema = new mongoose.Schema(
   {
-    product: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-      required: true,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-      min: 1,
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    totalItemPrice: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-  },
-  { _id: false }
-);
-
-const orderSchema = new mongoose.Schema(
-  {
+    // المستخدم اللي دفع
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    // اختياري: لو عايز تربطه ببائع معيّن
-    vendor: {
+
+    // الطلب اللي الدفع حصل ليه
+    order: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Order",
+      required: true,
     },
-    items: [orderItemSchema],
-    paymentMethod: {
+
+    // طريقة الدفع: كاش – سترايب – بايبال
+    method: {
       type: String,
       enum: ["cash", "stripe", "paypal"],
       required: true,
     },
-    totalPrice: {
+
+    // المبلغ المطلوب دفعه
+    amount: {
       type: Number,
       required: true,
-      min: 0,
     },
-    // حالة الطلب نفسها
-    orderStatus: {
-      type: String,
-      enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
-      default: "pending",
-    },
+
     // حالة الدفع
-    paymentStatus: {
+    status: {
       type: String,
       enum: ["pending", "paid", "failed"],
       default: "pending",
+    },
+
+    // رقم العملية (من Stripe أو PayPal)
+    transactionId: {
+      type: String,
+      default: null,
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.models.Order || mongoose.model("Order", orderSchema);
+// ← الحل هنا
+module.exports =
+  mongoose.models.Payment || mongoose.model("Payment", paymentSchema);
+
+  
