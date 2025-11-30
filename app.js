@@ -1,51 +1,30 @@
 const express = require("express");
-const dotenv = require("dotenv");
-const connectDB = require("./config/db");
-
-// تحميل المتغيرات من ملف .env
-dotenv.config();
-
 const app = express();
+require("dotenv").config();
+const mongoose = require("mongoose");
+const cors = require("cors");
 
-// لفهم JSON المرسل من العميل
 app.use(express.json());
+app.use(cors());
 
-// --------------------------------------------------
-//  الاتصال بقاعدة البيانات MongoDB
-// --------------------------------------------------
-connectDB();
+// ENV variables
+const port = process.env.PORT || 3000;
+const mongoUrl = process.env.MONGO_URL;
 
-// --------------------------------------------------
-//                API ROUTES
-// --------------------------------------------------
+// Connect to MongoDB
+mongoose
+  .connect(mongoUrl)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.log("❌ MongoDB Error:", err));
 
-// 🔐 عضويات + تسجيل دخول
-const authRoutes = require("./routes/authRoutes");
-app.use("/api/auth", authRoutes);
+// Routes
+const routes = require("./routes/index");
+app.use("/api", routes);
 
-// 🛒 سلة المنتجات (Cart)
-const cartRoutes = require("./routes/cartRoutes");
-app.use("/api/cart", cartRoutes);
-
-// 📦 الطلبات (Orders)
-const orderRoutes = require("./routes/orderRoutes");
-app.use("/api/orders", orderRoutes);
-
-// 💳 الدفع (Payment)
-const paymentRoutes = require("./routes/paymentRoutes");
-app.use("/api/payment", paymentRoutes);
-
-// --------------------------------------------------
-//  TEST ROUTE — للتأكد إن السيرفر شغال
-// --------------------------------------------------
+// Home route
 app.get("/", (req, res) => {
-  res.send("home page");
+  res.send("API Running...");
 });
 
-// --------------------------------------------------
-// تشغيل السيرفر
-// --------------------------------------------------
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`🚀 Server running on port ${PORT}`)
-);
+// Start server
+app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
