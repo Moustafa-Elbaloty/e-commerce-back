@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-// Controllers
-const { register, login } = require("../controller/authController");
 
 const {
   getCart,
@@ -27,23 +25,6 @@ const {
   getPaymentById,
   confirmStripePayment,
 } = require("../controller/paymentController");
-
-const {
-  addProduct,
-  updateProduct,
-  deleteProduct,
-  getProducts,
-} = require("../controller/productController");
-
-// Middleware
-const auth = require("../middleware/auth");
-
-// ===========================
-//        AUTH ROUTES
-// ===========================
-
-router.post("/auth/register", register);
-router.post("/auth/login", login);
 
 // ===========================
 //        CART ROUTES
@@ -74,15 +55,5 @@ router.post("/payment/stripe", auth, stripeInit); // تهيئة دفع Stripe
 router.post("/payment/stripe/confirm", auth, confirmStripePayment); // تأكيد دفع Stripe
 router.post("/payment/paypal", auth, paypalPay); // دفع PayPal
 router.post("/payment/cash", auth, cashPay); // دفع كاش
-
-// ===========================
-//       PRODUCT ROUTES
-// ===========================
-
-router.post("/products", auth, addProduct); // إضافة منتج
-router.get("/products", getProducts); // كل المنتجات
-router.put("/products/:id", auth, updateProduct); // تعديل منتج
-router.delete("/products/:id", auth, deleteProduct); // حذف منتج
-
 // Export all routes together
 module.exports = router;
