@@ -1,66 +1,40 @@
-# 📚 API Documentation
+# 🚀 Active Routes Documentation
 
 **Base URL**: `http://localhost:3000/api`
 
 ---
 
-## 🔐 AUTH ROUTES (لا تحتاج Token)
-
-### 1) Register User/Vendor
-
-- **Method**: `POST`
-- **URL**: `http://localhost:3000/api/auth/register`
-- **Headers**: `Content-Type: application/json`
-- **Body**:
-
-```json
-{
-  "name": "User One",
-  "email": "user1@example.com",
-  "password": "123456",
-  "role": "user"
-}
-```
-
-أو للـ Vendor:
-
-```json
-{
-  "name": "Vendor One",
-  "email": "vendor1@example.com",
-  "password": "123456",
-  "role": "vendor"
-}
-```
-
-### 2) Login
-
-- **Method**: `POST`
-- **URL**: `http://localhost:3000/api/auth/login`
-- **Headers**: `Content-Type: application/json`
-- **Body**:
-
-```json
-{
-  "email": "user1@example.com",
-  "password": "123456"
-}
-```
-
-- **Response**: يرجع `token` - استخدمه في Header: `Authorization: Bearer <TOKEN>`
-
----
-
 ## 🛒 CART ROUTES (تحتاج User Token)
 
-### 3) Get Cart
+### 1) Get Cart
 
 - **Method**: `GET`
 - **URL**: `http://localhost:3000/api/cart`
 - **Headers**: `Authorization: Bearer <USER_TOKEN>`
 - **Response**: يرجع الكارت مع `totalPrice` و `totalItems`
 
-### 4) Add To Cart
+**Example Response**:
+
+```json
+{
+  "items": [
+    {
+      "product": {
+        "_id": "665f1c3a9c0e4f2b4a123456",
+        "name": "iPhone 15 Pro",
+        "price": 45000
+      },
+      "quantity": 2
+    }
+  ],
+  "totalPrice": "90000.00",
+  "totalItems": 2
+}
+```
+
+---
+
+### 2) Add To Cart
 
 - **Method**: `POST`
 - **URL**: `http://localhost:3000/api/cart/add`
@@ -76,7 +50,28 @@
 }
 ```
 
-### 5) Update Cart Item Quantity
+**Example Response**:
+
+```json
+{
+  "items": [
+    {
+      "product": {
+        "_id": "665f1c3a9c0e4f2b4a123456",
+        "name": "iPhone 15 Pro",
+        "price": 45000
+      },
+      "quantity": 2
+    }
+  ],
+  "totalPrice": "90000.00",
+  "totalItems": 2
+}
+```
+
+---
+
+### 3) Update Cart Item Quantity
 
 - **Method**: `PUT`
 - **URL**: `http://localhost:3000/api/cart/update/:productId`
@@ -92,18 +87,49 @@
 }
 ```
 
-### 6) Remove From Cart
+**Example Response**:
+
+```json
+{
+  "items": [
+    {
+      "product": {
+        "_id": "665f1c3a9c0e4f2b4a123456",
+        "name": "iPhone 15 Pro",
+        "price": 45000
+      },
+      "quantity": 5
+    }
+  ],
+  "totalPrice": "225000.00",
+  "totalItems": 5
+}
+```
+
+---
+
+### 4) Remove From Cart
 
 - **Method**: `DELETE`
 - **URL**: `http://localhost:3000/api/cart/remove/:productId`
 - **مثال**: `http://localhost:3000/api/cart/remove/665f1c3a9c0e4f2b4a123456`
 - **Headers**: `Authorization: Bearer <USER_TOKEN>`
 
+**Example Response**:
+
+```json
+{
+  "items": [],
+  "totalPrice": "0.00",
+  "totalItems": 0
+}
+```
+
 ---
 
 ## 📦 ORDER ROUTES (تحتاج User Token)
 
-### 7) Create Order
+### 5) Create Order
 
 - **Method**: `POST`
 - **URL**: `http://localhost:3000/api/orders/create`
@@ -122,20 +148,102 @@
 **Payment Methods**: `"cash"`, `"stripe"`, `"paypal"`  
 **Note**: `vendorId` اختياري
 
-### 8) Get My Orders
+**Example Response**:
+
+```json
+{
+  "message": "Order created successfully",
+  "order": {
+    "_id": "692b1e341448d3392cdc738a",
+    "user": "665f1a2b3c4d5e6f7a8b9c0d",
+    "items": [
+      {
+        "product": "665f1c3a9c0e4f2b4a123456",
+        "quantity": 2,
+        "price": 45000,
+        "totalItemPrice": 90000
+      }
+    ],
+    "paymentMethod": "cash",
+    "totalPrice": 90000,
+    "orderStatus": "pending",
+    "paymentStatus": "pending"
+  }
+}
+```
+
+---
+
+### 6) Get My Orders
 
 - **Method**: `GET`
 - **URL**: `http://localhost:3000/api/orders/myorders`
 - **Headers**: `Authorization: Bearer <USER_TOKEN>`
 
-### 9) Get Order By ID
+**Example Response**:
+
+```json
+[
+  {
+    "_id": "692b1e341448d3392cdc738a",
+    "user": "665f1a2b3c4d5e6f7a8b9c0d",
+    "items": [
+      {
+        "product": {
+          "_id": "665f1c3a9c0e4f2b4a123456",
+          "name": "iPhone 15 Pro",
+          "price": 45000
+        },
+        "quantity": 2,
+        "price": 45000,
+        "totalItemPrice": 90000
+      }
+    ],
+    "paymentMethod": "cash",
+    "totalPrice": 90000,
+    "orderStatus": "pending",
+    "paymentStatus": "pending"
+  }
+]
+```
+
+---
+
+### 7) Get Order By ID
 
 - **Method**: `GET`
 - **URL**: `http://localhost:3000/api/orders/:id`
 - **مثال**: `http://localhost:3000/api/orders/692b1e341448d3392cdc738a`
 - **Headers**: `Authorization: Bearer <USER_TOKEN>`
 
-### 10) Cancel Order
+**Example Response**:
+
+```json
+{
+  "_id": "692b1e341448d3392cdc738a",
+  "user": "665f1a2b3c4d5e6f7a8b9c0d",
+  "items": [
+    {
+      "product": {
+        "_id": "665f1c3a9c0e4f2b4a123456",
+        "name": "iPhone 15 Pro",
+        "price": 45000
+      },
+      "quantity": 2,
+      "price": 45000,
+      "totalItemPrice": 90000
+    }
+  ],
+  "paymentMethod": "cash",
+  "totalPrice": 90000,
+  "orderStatus": "pending",
+  "paymentStatus": "pending"
+}
+```
+
+---
+
+### 8) Cancel Order
 
 - **Method**: `PUT`
 - **URL**: `http://localhost:3000/api/orders/cancel/:id`
@@ -143,7 +251,22 @@
 - **Headers**: `Authorization: Bearer <USER_TOKEN>`
 - **Note**: يشتغل بس لو `orderStatus === "pending"`
 
-### 11) Update Order Status (Vendor/Admin Only)
+**Example Response**:
+
+```json
+{
+  "message": "Order cancelled",
+  "order": {
+    "_id": "692b1e341448d3392cdc738a",
+    "orderStatus": "cancelled",
+    "paymentStatus": "pending"
+  }
+}
+```
+
+---
+
+### 9) Update Order Status (Vendor/Admin Only)
 
 - **Method**: `PUT`
 - **URL**: `http://localhost:3000/api/orders/:id/status`
@@ -161,24 +284,84 @@
 
 **Status Values**: `"pending"`, `"processing"`, `"shipped"`, `"delivered"`, `"cancelled"`
 
+**Example Response**:
+
+```json
+{
+  "message": "Order status updated",
+  "order": {
+    "_id": "692b1e341448d3392cdc738a",
+    "orderStatus": "processing",
+    "paymentStatus": "paid"
+  }
+}
+```
+
 ---
 
 ## 💳 PAYMENT ROUTES (تحتاج User Token)
 
-### 12) Get My Payments
+### 10) Get My Payments
 
 - **Method**: `GET`
 - **URL**: `http://localhost:3000/api/payments`
 - **Headers**: `Authorization: Bearer <USER_TOKEN>`
 
-### 13) Get Payment By ID
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "count": 2,
+  "payments": [
+    {
+      "_id": "665f1e4c9c0e4f2b4a112233",
+      "user": "665f1a2b3c4d5e6f7a8b9c0d",
+      "order": {
+        "_id": "692b1e341448d3392cdc738a",
+        "totalPrice": 90000
+      },
+      "method": "paypal",
+      "amount": 90000,
+      "status": "paid",
+      "transactionId": "PAYPAL-1234567890"
+    }
+  ]
+}
+```
+
+---
+
+### 11) Get Payment By ID
 
 - **Method**: `GET`
 - **URL**: `http://localhost:3000/api/payments/:id`
 - **مثال**: `http://localhost:3000/api/payments/665f1e4c9c0e4f2b4a112233`
 - **Headers**: `Authorization: Bearer <USER_TOKEN>`
 
-### 14) Stripe Payment Init
+**Example Response**:
+
+```json
+{
+  "success": true,
+  "payment": {
+    "_id": "665f1e4c9c0e4f2b4a112233",
+    "user": "665f1a2b3c4d5e6f7a8b9c0d",
+    "order": {
+      "_id": "692b1e341448d3392cdc738a",
+      "totalPrice": 90000
+    },
+    "method": "paypal",
+    "amount": 90000,
+    "status": "paid",
+    "transactionId": "PAYPAL-1234567890"
+  }
+}
+```
+
+---
+
+### 12) Stripe Payment Init
 
 - **Method**: `POST`
 - **URL**: `http://localhost:3000/api/payment/stripe`
@@ -193,9 +376,27 @@
 }
 ```
 
-- **Response**: يرجع `clientSecret` - استخدمه في الفرونت إند لإكمال الدفع
+**Example Response**:
 
-### 15) Confirm Stripe Payment
+```json
+{
+  "message": "Stripe payment initialized",
+  "clientSecret": "pi_xxx_secret_xxx",
+  "payment": {
+    "_id": "665f1e4c9c0e4f2b4a112233",
+    "user": "665f1a2b3c4d5e6f7a8b9c0d",
+    "order": "692b1e341448d3392cdc738a",
+    "method": "stripe",
+    "amount": 90000,
+    "status": "pending",
+    "transactionId": "pi_xxx"
+  }
+}
+```
+
+---
+
+### 13) Confirm Stripe Payment
 
 - **Method**: `POST`
 - **URL**: `http://localhost:3000/api/payment/stripe/confirm`
@@ -210,7 +411,26 @@
 }
 ```
 
-### 16) PayPal Payment
+**Example Response**:
+
+```json
+{
+  "message": "Payment confirmed successfully",
+  "payment": {
+    "_id": "665f1e4c9c0e4f2b4a112233",
+    "status": "paid"
+  },
+  "order": {
+    "_id": "692b1e341448d3392cdc738a",
+    "paymentStatus": "paid",
+    "orderStatus": "processing"
+  }
+}
+```
+
+---
+
+### 14) PayPal Payment
 
 - **Method**: `POST`
 - **URL**: `http://localhost:3000/api/payment/paypal`
@@ -225,9 +445,33 @@
 }
 ```
 
-- **Note**: Simulation - بيعمل الدفع فورًا ويحدث حالة الطلب
+**Example Response**:
 
-### 17) Cash Payment
+```json
+{
+  "message": "PayPal payment successful",
+  "payment": {
+    "_id": "665f1e4c9c0e4f2b4a112233",
+    "user": "665f1a2b3c4d5e6f7a8b9c0d",
+    "order": "692b1e341448d3392cdc738a",
+    "method": "paypal",
+    "amount": 90000,
+    "status": "paid",
+    "transactionId": "PAYPAL-1234567890"
+  },
+  "order": {
+    "_id": "692b1e341448d3392cdc738a",
+    "paymentStatus": "paid",
+    "orderStatus": "processing"
+  }
+}
+```
+
+**Note**: Simulation - بيعمل الدفع فورًا ويحدث حالة الطلب
+
+---
+
+### 15) Cash Payment
 
 - **Method**: `POST`
 - **URL**: `http://localhost:3000/api/payment/cash`
@@ -242,79 +486,26 @@
 }
 ```
 
----
-
-## 🛍️ PRODUCT ROUTES
-
-### 18) Add Product (Vendor/Admin Only)
-
-- **Method**: `POST`
-- **URL**: `http://localhost:3000/api/products`
-- **Headers**:
-  - `Authorization: Bearer <VENDOR_OR_ADMIN_TOKEN>`
-  - `Content-Type: application/json`
-- **Body**:
+**Example Response**:
 
 ```json
 {
-  "name": "iPhone 15 Pro",
-  "price": 45000,
-  "description": "Latest iPhone with amazing features and great camera.",
-  "category": "smartphones",
-  "stock": 10,
-  "image": "https://example.com/images/iphone15pro.png"
+  "message": "Cash payment selected",
+  "payment": {
+    "_id": "665f1e4c9c0e4f2b4a112233",
+    "user": "665f1a2b3c4d5e6f7a8b9c0d",
+    "order": "692b1e341448d3392cdc738a",
+    "method": "cash",
+    "amount": 90000,
+    "status": "pending"
+  },
+  "order": {
+    "_id": "692b1e341448d3392cdc738a",
+    "paymentStatus": "pending",
+    "orderStatus": "pending"
+  }
 }
 ```
-
-**Categories**: `"electronics"`, `"smartphones"`, `"clothes"`, `"food"`, `"other"`
-
-### 19) Get All Products (Public - لا يحتاج Token)
-
-- **Method**: `GET`
-- **URL**: `http://localhost:3000/api/products`
-- **Query Parameters (اختياري)**:
-  - `?page=1` - رقم الصفحة
-  - `?limit=10` - عدد المنتجات في الصفحة
-  - `?category=smartphones` - فلترة حسب الفئة
-  - `?minPrice=1000` - أقل سعر
-  - `?maxPrice=50000` - أعلى سعر
-  - `?q=iphone` - بحث نصي
-  - `?sort=price` - ترتيب حسب (price, createdAt, etc.)
-  - `?order=desc` - ترتيب (asc أو desc)
-- **مثال**: `http://localhost:3000/api/products?page=1&limit=10&category=smartphones&minPrice=1000&maxPrice=50000&sort=price&order=desc`
-
-### 20) Update Product (Vendor/Admin Only)
-
-- **Method**: `PUT`
-- **URL**: `http://localhost:3000/api/products/:id`
-- **مثال**: `http://localhost:3000/api/products/665f1c3a9c0e4f2b4a123456`
-- **Headers**:
-  - `Authorization: Bearer <VENDOR_OR_ADMIN_TOKEN>`
-  - `Content-Type: application/json`
-- **Body** (أي حقل عايز تغيره):
-
-```json
-{
-  "price": 42000,
-  "stock": 15
-}
-```
-
-أو:
-
-```json
-{
-  "name": "iPhone 15 Pro Max",
-  "description": "Updated description"
-}
-```
-
-### 21) Delete Product (Vendor/Admin Only)
-
-- **Method**: `DELETE`
-- **URL**: `http://localhost:3000/api/products/:id`
-- **مثال**: `http://localhost:3000/api/products/665f1c3a9c0e4f2b4a123456`
-- **Headers**: `Authorization: Bearer <VENDOR_OR_ADMIN_TOKEN>`
 
 ---
 
@@ -322,15 +513,9 @@
 
 ### Authentication:
 
-- كل الـ routes (ماعدا `/auth/register`, `/auth/login`, و `GET /products`) تحتاج Token
-- خذ الـ Token من `POST /api/auth/login`
+- كل الـ routes تحتاج Token
+- خذ الـ Token من `POST /api/auth/login` (لو Auth routes شغالة)
 - استخدمه في Header: `Authorization: Bearer <TOKEN>`
-
-### Roles:
-
-- **User**: يقدر يستخدم Cart, Orders, Payments
-- **Vendor**: يقدر يضيف/يعدل/يحذف Products + يغير Order Status
-- **Admin**: نفس صلاحيات Vendor
 
 ### IDs:
 
@@ -338,14 +523,6 @@
 - الـ IDs بتكون ObjectId من MongoDB (مثلاً: `665f1c3a9c0e4f2b4a123456`)
 
 ### Enums:
-
-**Categories**:
-
-- `"electronics"`
-- `"smartphones"`
-- `"clothes"`
-- `"food"`
-- `"other"`
 
 **Order Status**:
 
@@ -371,29 +548,13 @@
 
 ## 🎯 سيناريو كامل للتجربة:
 
-1. **Register User** → `POST /api/auth/register` (مع `"role": "user"`)
-2. **Login User** → `POST /api/auth/login` → خذ الـ `token`
-3. **Register Vendor** → `POST /api/auth/register` (مع `"role": "vendor"`)
-4. **Login Vendor** → `POST /api/auth/login` → خذ الـ `token`
-5. **Add Product** → `POST /api/products` (بـ Vendor token)
-6. **Get Products** → `GET /api/products` → خذ `product._id`
-7. **Add To Cart** → `POST /api/cart/add` (بـ User token + productId)
-8. **Get Cart** → `GET /api/cart` (بـ User token) → شوف الـ totalPrice
-9. **Create Order** → `POST /api/orders/create` (بـ User token) → خذ `order._id`
-10. **Pay** → `POST /api/payment/paypal` أو `/api/payment/cash` (بـ User token + orderId)
-11. **Get My Orders** → `GET /api/orders/myorders` (بـ User token)
-12. **Update Order Status** → `PUT /api/orders/:id/status` (بـ Vendor token)
-
----
-
-## 🔧 Environment Variables (.env):
-
-```env
-MONGO_URL=mongodb://localhost:27017/final_db
-JWT_SECRET=my_super_secret_jwt_key_123456789
-STRIPE_SECRET_KEY=sk_test_your_stripe_key_here
-PORT=3000
-```
+1. **Add To Cart** → `POST /api/cart/add` (بـ User token + productId)
+2. **Get Cart** → `GET /api/cart` (بـ User token) → شوف الـ totalPrice
+3. **Create Order** → `POST /api/orders/create` (بـ User token) → خذ `order._id`
+4. **Pay** → `POST /api/payment/paypal` أو `/api/payment/cash` (بـ User token + orderId)
+5. **Get My Orders** → `GET /api/orders/myorders` (بـ User token)
+6. **Get My Payments** → `GET /api/payments` (بـ User token)
+7. **Update Order Status** → `PUT /api/orders/:id/status` (بـ Vendor/Admin token)
 
 ---
 
@@ -401,8 +562,6 @@ PORT=3000
 
 | Route                     | Method | Auth | Description               |
 | ------------------------- | ------ | ---- | ------------------------- |
-| `/auth/register`          | POST   | ❌   | تسجيل مستخدم/بائع         |
-| `/auth/login`             | POST   | ❌   | تسجيل دخول                |
 | `/cart`                   | GET    | ✅   | جلب الكارت                |
 | `/cart/add`               | POST   | ✅   | إضافة للكارت              |
 | `/cart/update/:productId` | PUT    | ✅   | تحديث كمية                |
@@ -418,11 +577,9 @@ PORT=3000
 | `/payment/stripe/confirm` | POST   | ✅   | تأكيد دفع Stripe          |
 | `/payment/paypal`         | POST   | ✅   | دفع PayPal                |
 | `/payment/cash`           | POST   | ✅   | دفع كاش                   |
-| `/products`               | POST   | ✅   | إضافة منتج (Vendor/Admin) |
-| `/products`               | GET    | ❌   | جلب كل المنتجات           |
-| `/products/:id`           | PUT    | ✅   | تعديل منتج (Vendor/Admin) |
-| `/products/:id`           | DELETE | ✅   | حذف منتج (Vendor/Admin)   |
 
 ---
 
-**Last Updated**: 2024
+**Total Active Routes**: 15 routes
+
+
