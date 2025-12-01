@@ -106,6 +106,9 @@ const deleteVendor = async (req, res) => {
 
     await vendorModel.deleteOne({ _id: vendor._id });
 
+        // احذف كل المنتجات المرتبطة بهذا الـ vendor
+    await productModel.deleteMany({ vendor: vendor._id });
+    
     // OPTIONAL: change user role back to user
     await userModel.findByIdAndUpdate(req.user.id, { role: "user" });
 
@@ -202,5 +205,6 @@ const getVendorDashboard = async (req, res) => {
     });
   }
 };
+
 
 module.exports = { createVendor, getVendorProfile, updateVendor, deleteVendor, getVendorProducts, getVendorDashboard }
