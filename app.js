@@ -1,30 +1,41 @@
 const express = require("express");
-const app = express();
-require("dotenv").config();
-const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 const cors = require("cors");
+const connectDB = require("./config/db");
 
+dotenv.config();
+
+const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ENV variables
-const port = process.env.PORT || 3000;
-const mongoUrl = process.env.MONGO_URL;
+//  الاتصال بقاعدة البيانات
+connectDB();
 
-// Connect to MongoDB
-mongoose
-  .connect(mongoUrl)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.log("❌ MongoDB Error:", err));
+// ✅ مسارات المستخدم (هنا بنستعمل الملفات المنفصلة)
+//  استدعاء راوت المستخدمين
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
 
-// Routes
-const routes = require("./routes/index");
-app.use("/api", routes);
+const vendorRoutes = require("./routes/vendorRoutes");
+app.use("/api/vendor", vendorRoutes);
 
-// Home route
+const productRoutes = require("./routes/productRoutes");
+app.use("/api/products", productRoutes);
+
+// Cart / Orders / Payment (منفصلين برضه)
+const cartRoutes = require("./routes/cartRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+
+app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/payment", paymentRoutes);
+
+const PORT = process.env.PORT || 5000;
+
 app.get("/", (req, res) => {
-  res.send("API Running...");
+  res.send("home page");
 });
 
-// Start server
-app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
+app.listen(PORT, () => console.log(` Server running on port ${PORT}`));
